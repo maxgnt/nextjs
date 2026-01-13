@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import type { IRegister } from '@/interfaces/user'
 import { MRegister } from '@/middleware/register'
 import { prisma } from "@/lib/prisma"
+import { ArgonHash } from '@/lib/argon2i';
 
 export async function POST(req: Request) {
   
@@ -17,12 +18,15 @@ export async function POST(req: Request) {
 
 
     try {
+
+        const ps : string | undefined  = await ArgonHash (password)
+
         await prisma.user.create({
             data: {
                 firstname: firstname,
                 lastname: lastname,
                 email: email,
-                password: password
+                password: password as string 
             },
         })
 
